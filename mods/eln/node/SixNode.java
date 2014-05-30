@@ -260,13 +260,14 @@ public class SixNode extends Node {
 			else
 			{
 				nbt.setShort(str + "EID"+idx, (short) sideElementIdList[idx]);
-				sideElement.writeToNBT(nbt, str + "ED"+idx);			
+				sideElement.writeToNBT(nbt, str + "ED"+idx);	
+				sideElement.writeToNBT(Utils.newNbtTagCompund(nbt, "ED"+idx),"");
 			}		
 			idx++;
 		}
 
 
-		
+    	super.writeToNBT(Utils.newNbtTagCompund(nbt,"node"),"");			
     	super.writeToNBT(nbt,str + "node");
     }
 	

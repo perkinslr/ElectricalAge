@@ -657,33 +657,16 @@ public class Eln {
 		for (String path : objNames) {
 			obj.loadObj("eln", path);
 		}
-		// obj.loadObj("eln","/model/activeThermalDissipatorA/activethermaldissipatora.obj");
-		// Obj3DFolder miaou = new Obj3DFolder();
-		// miaou.loadFolder("/mods/eln/model");
 
-		// addRecipe(new ItemStack(treeResinCollectorBlock,1), "X",
-		// Character.valueOf('X'), Block.dirt);
-		/*
-		 * LanguageRegistry.instance().addStringLocalization(
-		 * "itemGroup.ElnCreativeTab", "en_US", "Eln tab");
-		 * LanguageRegistry.addName(multimeterItem, "Multimeter");
-		 * LanguageRegistry.addName(allMeterItem, "AllMeterItem");
-		 * LanguageRegistry.addName(toolsSetItem, "Tools set");
-		 * LanguageRegistry.addName(voltMeterHelmet,"VoltMeter Helmet");
-		 * LanguageRegistry.addName(thermoMeterHelmet,"ThermoMeter Helmet");
-		 * LanguageRegistry.addName(currentMeterHelmet,"Current Helmet");
-		 */
-		GameRegistry.registerBlock(sixNodeBlock, SixNodeItem.class);
+		GameRegistry.registerItem(sharedItem, "Eln.sharedItem");
+		GameRegistry.registerItem(sharedItemStackOne, "Eln.sharedItemStackOne");
+		GameRegistry.registerBlock(ghostBlock, "Eln.ghostBlock");
+		GameRegistry.registerBlock(lightBlock, "Eln.lightBlock");
+		GameRegistry.registerBlock(sixNodeBlock, SixNodeItem.class, "Eln.SixNode");
+		GameRegistry.registerBlock(transparentNodeBlock, TransparentNodeItem.class,"Eln.TransparentNode");
+		GameRegistry.registerBlock(oreBlock, OreItem.class, "Eln.Ore");
+		TileEntity.addMapping(TransparentNodeEntity.class,"TransparentNodeEntity");
 		TileEntity.addMapping(SixNodeEntity.class, "SixNodeEntity");
-
-		GameRegistry.registerBlock(transparentNodeBlock,
-				TransparentNodeItem.class);
-		TileEntity.addMapping(TransparentNodeEntity.class,
-				"TransparentNodeEntity");
-
-		GameRegistry.registerBlock(oreBlock, OreItem.class);
-
-		// TileEntity.addMapping(GhostEntity.class, "GhostEntity");
 		TileEntity.addMapping(LightBlockEntity.class, "LightBlockEntity");
 
 		NodeManager.registerBlock(sixNodeBlock, SixNode.class);

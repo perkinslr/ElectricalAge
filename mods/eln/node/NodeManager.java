@@ -11,6 +11,7 @@ import java.util.Random;
 
 
 
+import mods.eln.Eln;
 import mods.eln.misc.Coordonate;
 import mods.eln.misc.Direction;
 import mods.eln.misc.Utils;
@@ -137,6 +138,13 @@ public class NodeManager extends WorldSavedData{
 			if(node.mustBeSaved() == false) continue;
 			NBTTagCompound nbtNode = new NBTTagCompound();
 			nbtNode.setShort("UUID", node.getBlockId());
+			if(node.getBlockId() == Eln.transparentNodeBlock.blockID)
+				nbtNode.setString("tag", "t");
+			if(node.getBlockId() == Eln.sixNodeBlock.blockID)
+				nbtNode.setString("tag", "s");
+			if(node.getBlockId() == Eln.ghostBlock.blockID)
+				nbtNode.setString("tag", "g");			
+			
 			node.writeToNBT(nbtNode,"");
 			nbt.setCompoundTag("n" + nodeCounter++, nbtNode);
 		}

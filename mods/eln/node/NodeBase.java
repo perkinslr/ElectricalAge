@@ -547,6 +547,20 @@ public abstract class NodeBase implements INBTTReady {
 			nbt.setShort(str + "NBID"+idx,neighborBlock[idx]);
         }
         
+        
+		byte neighborOpaque = 0;
+		byte neighborWrapable = 0;
+		for(Direction direction : Direction.values())
+		{			
+			Block b = Block.blocksList[neighborBlock[direction.getInt()]];
+			if(b != null && b.isOpaqueCube())
+				neighborOpaque |= 1 << direction.getInt();
+			if(isBlockWrappable(neighborBlock[direction.getInt()]))
+				neighborWrapable |= 1 << direction.getInt();
+		}
+        
+        nbt.setByte("NBOpaque",neighborOpaque);
+        nbt.setByte("NBWrap",neighborWrapable);
 
     }
 	

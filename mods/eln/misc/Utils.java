@@ -1214,5 +1214,9 @@ public class Utils {
 		int blockId = waterCoord.getBlockId();
 		return (blockId == Block.waterMoving.blockID || blockId == Block.waterStill.blockID) ;
 	}    
-
+	public static NBTTagCompound newNbtTagCompund(NBTTagCompound nbt, String string) {
+		NBTTagCompound cmp = new NBTTagCompound();
+		nbt.setTag(string, cmp);
+		return cmp;
+	}
 } 
