@@ -63,3 +63,5 @@ http://sourceforge.net/projects/modbus4j/files/modbus4j/
 The source code of this mod is licensed under the LGPL V3.0 licence. See http://www.gnu.org/copyleft/lesser.html for more informations.
 
 All graphics and 3D models are licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/.
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/e7e38dcb7701fa748a4f7273438228db "githalytics.com")](http://githalytics.com/Dolu1990/ElectricalAge)
