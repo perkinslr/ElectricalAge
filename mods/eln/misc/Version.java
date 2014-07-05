@@ -1,7 +1,10 @@
 package mods.eln.misc;
 
 /**
- * Mod version.
+ * Current mod version. Used to check if a new mod version is available. Must be
+ * set correctly for each mod release.
+ * 
+ * @author metc
  */
 public final class Version {
 
@@ -11,10 +14,12 @@ public final class Version {
 	/** Minor version code. */
 	public final static int MINOR = 5;
 
-	/** Unique version code. */
+	/**
+	 * Unique version code. Must be a String for annotations. Used to check if a
+	 * new version if available. Each update must increment this number.
+	 */
 	public final static String REVISION = "10";
 
-	
 	public final static String getVersionName() {
 		return String.format("BETA-%d.%d r%s", MAJOR, MINOR, REVISION);
 	}
