@@ -6,12 +6,13 @@ package mods.eln.misc;
 public class Color {
 
 	// Only some colors
-	public static String BLACK = new Color(0).toString();
-	public static String BLUE = new Color(1).toString();
-	public static String ORANGE = new Color(6).toString();
-	public static String RED = new Color(12).toString();
-	public static String WHITE = new Color(15).toString();
-	
+	public static final String BLACK = new Color(0).toString();
+	public static final String BLUE = new Color(1).toString();
+	public static final String ORANGE = new Color(6).toString();
+	public static final String GREEN = new Color(10).toString();
+	public static final String RED = new Color(12).toString();
+	public static final String WHITE = new Color(15).toString();
+
 	private String color;
 
 	/**
