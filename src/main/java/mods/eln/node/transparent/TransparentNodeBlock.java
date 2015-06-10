@@ -115,7 +115,10 @@ public class TransparentNodeBlock extends NodeBlock {
      //   this.setBlockBoundsBasedOnState(world,x, y, z);
       //  super.addCollisionBoxesToList(world, x, y, z, par5AxisAlignedBB, list, entity);
     	TileEntity tileEntity = world.getTileEntity(x, y, z);
-    	if(tileEntity == null || (tileEntity instanceof TransparentNodeEntity == false)){
+    	if (!world.isRemote && tileEntity instanceof TransparentNodeEntity && ((TransparentNodeEntity)tileEntity).getNode()==null){
+    	    super.addCollisionBoxesToList(world, x, y, z, par5AxisAlignedBB, list, entity);
+    	}
+    	else if(tileEntity == null || (tileEntity instanceof TransparentNodeEntity == false)){
     		super.addCollisionBoxesToList(world, x, y, z, par5AxisAlignedBB, list, entity);
     	}
     	else{
