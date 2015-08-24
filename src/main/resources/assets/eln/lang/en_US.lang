@@ -232,3 +232,6 @@ copper_ingot.name=Copper Ingot
 low_voltage_relay.name=Low Voltage Relay
 cyan_brush.name=Cyan Brush
 coal_dust.name=Coal Dust
+downlink.name=Downlink
+utility_pole.name=Utility Pole
+utility_pole_w/transformer.name=Utility Pole w/transformer
