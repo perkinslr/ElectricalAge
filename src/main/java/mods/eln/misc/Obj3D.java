@@ -1,7 +1,6 @@
 package mods.eln.misc;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import java.io.*;
@@ -14,6 +13,7 @@ public class Obj3D {
 
     List<Vertex> vertex = new ArrayList<Vertex>();
     List<Uv> uv = new ArrayList<Uv>();
+    List<Normal> normals = new ArrayList<Normal>();
 
     // Model obj properties read from the txt file
     Map<String, String> nameToStringHash = new Hashtable<String, String>();
@@ -76,12 +76,17 @@ public class Obj3D {
         }
 
         private void drawVertex() {
-            int mode = 0;
+            drawVertex(0, 0);
+        }
+		
+		private void drawVertex(float offsetX, float offsetY) {
+			int mode = 0;
 
-            for (Face f : face) {
+			for (Face f : face) {
                 if (f.vertexNbr != mode) {
                     if (mode != 0)
                         GL11.glEnd();
+                    assert f.vertexNbr == 3 || f.vertexNbr == 4;
                     switch (f.vertexNbr) {
                         case 3:
                             GL11.glBegin(GL11.GL_TRIANGLES);
@@ -100,50 +105,14 @@ public class Obj3D {
                     mode = f.vertexNbr;
                 }
 
-                GL11.glNormal3f(f.normal.x, f.normal.y, f.normal.z);
                 for (int idx = 0; idx < mode; idx++) {
+                    if (f.normals.length > idx && f.normals[idx] != null)
+                        GL11.glNormal3f(f.normals[idx].x, f.normals[idx].y, f.normals[idx].z);
                     if (f.uv[idx] != null)
-                        GL11.glTexCoord2f(f.uv[idx].u, f.uv[idx].v);
+                        GL11.glTexCoord2f(f.uv[idx].u + offsetX, f.uv[idx].v + offsetY);
                     GL11.glVertex3f(f.vertex[idx].x, f.vertex[idx].y, f.vertex[idx].z);
                 }
             }
-
-            if (mode != 0)
-                GL11.glEnd();
-        }
-		
-		private void drawVertex(float offsetX, float offsetY) {
-			int mode = 0;
-
-			for (Face f : face) {
-				if (f.vertexNbr != mode) {
-					if (mode != 0)
-						GL11.glEnd();
-					switch (f.vertexNbr) {
-						case 3:
-							GL11.glBegin(GL11.GL_TRIANGLES);
-							break;
-						case 4:
-							GL11.glBegin(GL11.GL_QUADS);
-							break;
-						case 6:
-							//	GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-							break;
-						case 8:
-							//	GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-							break;
-					}
-
-					mode = f.vertexNbr;
-				}
-
-				GL11.glNormal3f(f.normal.x, f.normal.y, f.normal.z);
-				for (int idx = 0; idx < mode; idx++) {
-					if (f.uv[idx] != null)
-						GL11.glTexCoord2f(f.uv[idx].u+offsetX, f.uv[idx].v+offsetY);
-					GL11.glVertex3f(f.vertex[idx].x, f.vertex[idx].y, f.vertex[idx].z);
-				}
-			}
 
 			if (mode != 0)
 				GL11.glEnd();
@@ -168,6 +137,7 @@ public class Obj3D {
 
         List<Vertex> vertex;
         List<Uv> uv;
+        List<Normal> normals;
 
         List<FaceGroup> faceGroup = new ArrayList<FaceGroup>();
 
@@ -179,9 +149,10 @@ public class Obj3D {
         float ox, oy, oz;
         float ox2, oy2, oz2;
 
-        public Obj3DPart(List<Vertex> vertex, List<Uv> uv) {
+        public Obj3DPart(List<Vertex> vertex, List<Uv> uv, List<Normal> normals) {
             this.vertex = vertex;
             this.uv = uv;
+            this.normals = normals;
         }
 
         void addVertex(Vertex v) {
@@ -276,6 +247,10 @@ public class Obj3D {
             }
             return box;
         }
+
+        public void addNormal(Normal n) {
+            normals.add(n);
+        }
     }
 
     Hashtable<String, Obj3DPart> nameToPartHash = new Hashtable<String, Obj3DPart>();
@@ -350,13 +325,20 @@ public class Obj3D {
         Face(Vertex[] vertex, Uv[] uv, Normal normal) {
             this.vertex = vertex;
             this.uv = uv;
-            this.normal = normal;
+            this.normals = new Normal[] {normal};
+            vertexNbr = vertex.length;
+        }
+
+        Face(Vertex[] vertex, Uv[] uv, Normal[] normals) {
+            this.vertex = vertex;
+            this.uv = uv;
+            this.normals = normals;
             vertexNbr = vertex.length;
         }
 
         public Vertex[] vertex;
         public Uv[] uv;
-        Normal normal;
+        Normal[] normals;
         public int vertexNbr;
     }
 
@@ -399,7 +381,7 @@ public class Obj3D {
                 while ((line = bufferedReader.readLine()) != null) {
                     String[] words = line.split(" ");
                     if (words[0].equals("o")) {
-                        part = new Obj3DPart(vertex, uv);
+                        part = new Obj3DPart(vertex, uv, normals);
                         nameToPartHash.put(words[1], part);
                     } else if (words[0].equals("v")) {
                         Vertex v = new Vertex(Float.parseFloat(words[1]), Float.parseFloat(words[2]), Float.parseFloat(words[3]));
@@ -413,11 +395,16 @@ public class Obj3D {
                     } else if (words[0].equals("vt")) {
                         part.uv.add(new Uv(Float.parseFloat(words[1]),
                                 1 - Float.parseFloat(words[2])));
+                    } else if (words[0].equals("vn")) {
+                        Normal n = new Normal(Float.parseFloat(words[1]), Float.parseFloat(words[2]), Float.parseFloat(words[3]));
+                        part.addNormal(n);
                     } else if (words[0].equals("f")) {
                         int vertexNbr = words.length - 1;
                         if (vertexNbr == 3) {
                             Vertex[] verticeId = new Vertex[vertexNbr];
                             Uv[] uvId = new Uv[vertexNbr];
+                            Normal[] normals = new Normal[vertexNbr];
+                            boolean haveNormals = true;
                             for (int idx = 0; idx < vertexNbr; idx++) {
                                 String[] id = words[idx + 1].split("/");
 
@@ -427,8 +414,17 @@ public class Obj3D {
                                 } else {
                                     uvId[idx] = null;
                                 }
+                                if (id.length > 2) {
+                                    normals[idx] = part.normals.get(Integer.parseInt(id[2]) - 1);
+                                } else {
+                                    haveNormals = false;
+                                }
                             }
-                            fg.face.add(new Face(verticeId, uvId, new Normal(verticeId[0], verticeId[1], verticeId[2])));
+                            if (haveNormals) {
+                                fg.face.add(new Face(verticeId, uvId, normals));
+                            } else {
+                                fg.face.add(new Face(verticeId, uvId, new Normal(verticeId[0], verticeId[1], verticeId[2])));
+                            }
                         } else {
                             Utils.println("obj assert vertexNbr != 3");
                         }
