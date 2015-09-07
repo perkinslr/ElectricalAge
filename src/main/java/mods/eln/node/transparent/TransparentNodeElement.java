@@ -31,6 +31,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.IFluidHandler;
 
 public abstract class TransparentNodeElement implements  GhostObserver,IPlayer{
 
@@ -125,8 +126,12 @@ public abstract class TransparentNodeElement implements  GhostObserver,IPlayer{
 	{
 		return null;
 	}
-	
-    public void preparePacketForClient(DataOutputStream stream)
+
+	public IFluidHandler getFluidHandler() {
+		return null;
+	}
+
+	public void preparePacketForClient(DataOutputStream stream)
     {
     	node.preparePacketForClient(stream); 	
     }

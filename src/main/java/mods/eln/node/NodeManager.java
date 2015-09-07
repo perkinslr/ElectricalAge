@@ -8,6 +8,10 @@ import java.util.Map.Entry;
 import mods.eln.misc.Coordonate;
 import mods.eln.misc.Direction;
 import mods.eln.misc.Utils;
+import mods.eln.node.six.SixNode;
+import mods.eln.node.six.SixNodeElement;
+import mods.eln.node.transparent.TransparentNode;
+import mods.eln.node.transparent.TransparentNodeElement;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldSavedData;
@@ -126,6 +130,24 @@ public class NodeManager extends WorldSavedData {
 		}
 		return nodesMap.get(nodeCoordonate);
 		// return null;
+	}
+
+	public SixNodeElement getSixNodeFromCoordinate(Coordonate coord, Direction side) {
+		NodeBase base = getNodeFromCoordonate(coord);
+		if (base instanceof SixNode) {
+			SixNode n = (SixNode) base;
+			return n.getElement(side);
+		}
+		return null;
+	}
+
+	public TransparentNodeElement getTransparentNodeFromCoordinate(Coordonate coord) {
+		NodeBase base = getNodeFromCoordonate(coord);
+		if (base instanceof TransparentNode) {
+			TransparentNode n = (TransparentNode) base;
+			return n.element;
+		}
+		return null;
 	}
 
 	Random rand = new Random();

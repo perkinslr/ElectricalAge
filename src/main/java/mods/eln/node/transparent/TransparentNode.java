@@ -19,6 +19,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.IFluidHandler;
 
 public class TransparentNode extends Node {
 
@@ -45,6 +46,11 @@ public class TransparentNode extends Node {
 		elementId = nbt.getShort("eid");
 		try {
 			TransparentNodeDescriptor descriptor = Eln.transparentNodeItem.getDescriptor(elementId);
+			if (descriptor == null) {
+				// TODO: These are getting annoying.
+				descriptor = Eln.transparentNodeItemWithFluid.getDescriptor(elementId);
+			}
+			assert descriptor != null;
 			element = (TransparentNodeElement) descriptor.ElementClass.getConstructor(TransparentNode.class, TransparentNodeDescriptor.class).newInstance(this, descriptor);
 		} catch (InstantiationException e) {
 
@@ -135,6 +141,12 @@ public class TransparentNode extends Node {
 		try {
 			// Direction front = null;
 			TransparentNodeDescriptor descriptor = Eln.transparentNodeItem.getDescriptor(itemStack);
+			if (descriptor == null) {
+				// Might be the fluid subtype.
+				// TODO: *sigh*, I don't even know.
+				descriptor = Eln.transparentNodeItemWithFluid.getDescriptor(itemStack);
+			}
+			assert descriptor != null;
 			/*
 			 * switch(descriptor.getFrontType()) { case BlockSide: front = side; break; case PlayerView: front = Utils.entityLivingViewDirection(entityLiving).getInverse(); break; case PlayerViewHorizontal: front = Utils.entityLivingHorizontalViewDirection(entityLiving).getInverse(); break;
 			 * 
@@ -190,6 +202,11 @@ public class TransparentNode extends Node {
 	{
 		if (element == null) return null;
 		return element.getInventory();
+	}
+
+	public IFluidHandler getFluidHandler() {
+		if (element == null) return null;
+		return element.getFluidHandler();
 	}
 
 	public Container newContainer(Direction side, EntityPlayer player)

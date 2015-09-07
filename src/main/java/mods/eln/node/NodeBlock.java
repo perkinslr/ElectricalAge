@@ -1,38 +1,27 @@
 package mods.eln.node;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Random;
-
-import org.lwjgl.Sys;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 
-import mods.eln.CommonProxy;
-import mods.eln.Eln;
 import mods.eln.misc.Direction;
 import mods.eln.misc.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public abstract class NodeBlock extends BlockContainer{//BlockContainer
+public abstract class NodeBlock extends BlockContainer{
+	private final Class tileEntityClass;//BlockContainer
 	public int blockItemNbr;
-	Class tileEntityClass;
-	public NodeBlock ( Material material,Class tileEntityClass,int blockItemNbr) {
+
+	public NodeBlock ( Material material, Class tileEntityClass, int blockItemNbr) {
 		super(material);
 		setBlockName("NodeBlock");
 		this.tileEntityClass = tileEntityClass;
@@ -158,8 +147,6 @@ public abstract class NodeBlock extends BlockContainer{//BlockContainer
 
 	@Override
 	public TileEntity createNewTileEntity(World var1,int a) {
-		
-
 		try {
 			return (TileEntity) tileEntityClass.getConstructor().newInstance();
 		} catch (InstantiationException e) {

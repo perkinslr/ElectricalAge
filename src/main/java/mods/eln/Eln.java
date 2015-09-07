@@ -35,10 +35,7 @@ import mods.eln.item.regulator.RegulatorAnalogDescriptor;
 import mods.eln.item.regulator.RegulatorOnOffDescriptor;
 import mods.eln.misc.*;
 import mods.eln.misc.series.SerieEE;
-import mods.eln.node.NodeBlockEntity;
-import mods.eln.node.NodeManager;
-import mods.eln.node.NodeManagerNbt;
-import mods.eln.node.NodeServer;
+import mods.eln.node.*;
 import mods.eln.node.simple.SimpleNodeItem;
 import mods.eln.node.six.*;
 import mods.eln.node.transparent.*;
@@ -125,10 +122,16 @@ import mods.eln.transparentnode.electricalmachine.MaceratorDescriptor;
 import mods.eln.transparentnode.electricalmachine.MagnetizerDescriptor;
 import mods.eln.transparentnode.electricalmachine.PlateMachineDescriptor;
 import mods.eln.transparentnode.fuelgenerator.FuelGeneratorDescriptor;
+import mods.eln.transparentnode.generator.GeneratorDescriptor;
+import mods.eln.transparentnode.generator.GeneratorElement;
+import mods.eln.transparentnode.generator.GeneratorRender;
 import mods.eln.transparentnode.heatfurnace.HeatFurnaceDescriptor;
 import mods.eln.transparentnode.powercapacitor.PowerCapacitorDescriptor;
 import mods.eln.transparentnode.powerinductor.PowerInductorDescriptor;
 import mods.eln.transparentnode.solarpannel.SolarPannelDescriptor;
+import mods.eln.transparentnode.steamturbine.SteamTurbineDescriptor;
+import mods.eln.transparentnode.steamturbine.SteamTurbineElement;
+import mods.eln.transparentnode.steamturbine.SteamTurbineRender;
 import mods.eln.transparentnode.teleporter.TeleporterDescriptor;
 import mods.eln.transparentnode.teleporter.TeleporterElement;
 import mods.eln.transparentnode.thermaldissipatoractive.ThermalDissipatorActiveDescriptor;
@@ -282,7 +285,9 @@ public class Eln {
 			"FuelGenerator/FuelGenerator.obj",
 			"PowerPole/UtilityPole.obj",
 			"PowerPole/DownLink.obj",
-			"PowerPole/Transformer.obj"
+			"PowerPole/Transformer.obj",
+			"turbineSteam/Turbine.obj",
+			"turbineSteam/Generator.obj",
 			// "/model/BatteryBigHV/BatteryBigHV.obj"
 	};
 
@@ -326,13 +331,13 @@ public class Eln {
 	public static SharedItem sharedItemStackOne;
 	public static ItemStack wrenchItemStack;
 	public static SixNodeBlock sixNodeBlock;
-	public static TransparentNodeBlock transparentNodeBlock;
+	public static TransparentNodeBlock transparentNodeBlock, transparentNodeWithFluidBlock;
 	public static OreBlock oreBlock;
 	public static GhostBlock ghostBlock;
 	public static LightBlock lightBlock;
 
 	public static SixNodeItem sixNodeItem;
-	public static TransparentNodeItem transparentNodeItem;
+	public static TransparentNodeItem transparentNodeItem, transparentNodeItemWithFluid;
 	public static OreItem oreItem;
 
 	// The instance of your mod that Forge uses.
@@ -537,6 +542,11 @@ public class Eln {
 				TransparentNodeEntity.class)
 				.setCreativeTab(creativeTab)
 				.setBlockTextureName("iron_block");
+		transparentNodeWithFluidBlock = (TransparentNodeBlock) new TransparentNodeBlock(
+				Material.iron,
+				TransparentNodeEntityWithFluid.class)
+				.setCreativeTab(creativeTab)
+				.setBlockTextureName("iron_block");
 		sixNodeBlock = (SixNodeBlock) new SixNodeBlock(
 				Material.plants, SixNodeEntity.class)
 				.setCreativeTab(creativeTab)
@@ -555,18 +565,22 @@ public class Eln {
 		GameRegistry.registerBlock(lightBlock, "Eln.lightBlock");
 		GameRegistry.registerBlock(sixNodeBlock, SixNodeItem.class, "Eln.SixNode");
 		GameRegistry.registerBlock(transparentNodeBlock, TransparentNodeItem.class, "Eln.TransparentNode");
+		GameRegistry.registerBlock(transparentNodeWithFluidBlock, TransparentNodeItem.class, "Eln.TransparentNodeWF");
 		GameRegistry.registerBlock(oreBlock, OreItem.class, "Eln.Ore");
 		TileEntity.addMapping(TransparentNodeEntity.class, "TransparentNodeEntity");
+		TileEntity.addMapping(TransparentNodeEntityWithFluid.class, "TransparentNodeEntityWF");
 		// TileEntity.addMapping(TransparentNodeEntityWithSiededInv.class, "TransparentNodeEntityWSI");
 		TileEntity.addMapping(SixNodeEntity.class, "SixNodeEntity");
 		TileEntity.addMapping(LightBlockEntity.class, "LightBlockEntity");
 
 		NodeManager.registerUuid(sixNodeBlock.getNodeUuid(), SixNode.class);
 		NodeManager.registerUuid(transparentNodeBlock.getNodeUuid(), TransparentNode.class);
+		NodeManager.registerUuid(transparentNodeWithFluidBlock.getNodeUuid(), TransparentNode.class);
 
 		o = Item.getItemFromBlock(sixNodeBlock);
 		sixNodeItem = (SixNodeItem) Item.getItemFromBlock(sixNodeBlock);
 		transparentNodeItem = (TransparentNodeItem) Item.getItemFromBlock(transparentNodeBlock);
+		transparentNodeItemWithFluid = (TransparentNodeItem) Item.getItemFromBlock(transparentNodeWithFluidBlock);
 
 		oreItem = (OreItem) Item.getItemFromBlock(oreBlock);
 		/*
@@ -2492,7 +2506,6 @@ public class Eln {
 				1.0, 1.1, 1.15, 1.18, 1.19, 1.25 }, 8.0 / 5.0);
 		FunctionTable PoutToPin = new FunctionTable(new double[] { 0.0, 0.2,
 				0.4, 0.6, 0.8, 1.0, 1.3, 1.8, 2.7 }, 8.0 / 5.0);
-
 		{
 			subId = 1;
 			name = "50V Turbine";
@@ -2555,6 +2568,33 @@ public class Eln {
 			transparentNodeItem.addDescriptor(subId + (id << 6), desc);
 		}
 
+		{
+			subId = 9;
+			SteamTurbineDescriptor desc = new SteamTurbineDescriptor(
+					"Steam Turbine",
+					SteamTurbineElement.class,
+					SteamTurbineRender.class,
+					obj.getObj("Turbine")
+					);
+			transparentNodeItemWithFluid.addDescriptor(subId + (id << 6), desc);
+		}
+
+		{
+			subId = 10;
+			float nominalRads = 200, nominalU = 800;
+			float nominalP = 4000;
+			GeneratorDescriptor desc = new GeneratorDescriptor(
+					"Generator",
+					GeneratorElement.class,
+					GeneratorRender.class,
+					highVoltageCableDescriptor,
+					obj.getObj("Generator"),
+					nominalRads, nominalU,
+					nominalP / (nominalU / 25),
+					nominalP
+					);
+			transparentNodeItem.addDescriptor(subId + (id << 6), desc);
+		}
 	}
 
 	/*

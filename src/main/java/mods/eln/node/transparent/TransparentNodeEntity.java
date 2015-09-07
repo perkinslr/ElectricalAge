@@ -24,7 +24,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 
-public class TransparentNodeEntity extends NodeBlockEntity implements ISidedInventory { // boolean[] syncronizedSideEnable = new boolean[6];
+public class TransparentNodeEntity extends NodeBlockEntity implements ISidedInventory {
+	// boolean[] syncronizedSideEnable = new boolean[6];
 	TransparentNodeElementRender elementRender = null;
 	short elementRenderId;
 
@@ -41,17 +42,18 @@ public class TransparentNodeEntity extends NodeBlockEntity implements ISidedInve
 
 		try {
 			Short id = stream.readShort();
-			if (id == 0)
-			{
+			if (id == 0) {
 				elementRenderId = (byte) 0;
 				elementRender = null;
-			}
-			else
-			{
-				if (id != elementRenderId)
-				{
+			} else {
+				if (id != elementRenderId) {
 					elementRenderId = id;
 					TransparentNodeDescriptor descriptor = Eln.transparentNodeItem.getDescriptor(id);
+					if (descriptor == null) {
+						descriptor = Eln.transparentNodeItemWithFluid.getDescriptor(id);
+					}
+					assert descriptor != null;
+
 					elementRender = (TransparentNodeElementRender) descriptor.RenderClass.getConstructor(TransparentNodeEntity.class, TransparentNodeDescriptor.class).newInstance(this, descriptor);
 				}
 				elementRender.networkUnserialize(stream);
@@ -82,20 +84,17 @@ public class TransparentNodeEntity extends NodeBlockEntity implements ISidedInve
 
 	}
 
-	public Container newContainer(Direction side, EntityPlayer player)
-	{
-		TransparentNode n = (TransparentNode)getNode();
-		if(n == null) return null;
+	public Container newContainer(Direction side, EntityPlayer player) {
+		TransparentNode n = (TransparentNode) getNode();
+		if (n == null) return null;
 		return n.newContainer(side, player);
 	}
 
-	public GuiScreen newGuiDraw(Direction side, EntityPlayer player)
-	{
+	public GuiScreen newGuiDraw(Direction side, EntityPlayer player) {
 		return elementRender.newGuiDraw(side, player);
 	}
 
-	public void preparePacketForServer(DataOutputStream stream)
-	{
+	public void preparePacketForServer(DataOutputStream stream) {
 		try {
 			super.preparePacketForServer(stream);
 
@@ -107,20 +106,17 @@ public class TransparentNodeEntity extends NodeBlockEntity implements ISidedInve
 		}
 	}
 
-	public void sendPacketToServer(ByteArrayOutputStream bos)
-	{
+	public void sendPacketToServer(ByteArrayOutputStream bos) {
 		super.sendPacketToServer(bos);
 	}
 
-	public boolean cameraDrawOptimisation()
-	{
+	public boolean cameraDrawOptimisation() {
 		if (elementRender == null) return super.cameraDrawOptimisation();
 		return elementRender.cameraDrawOptimisation();
 	}
 
 	public int getDamageValue(World world, int x, int y, int z) {
-		if (world.isRemote)
-		{
+		if (world.isRemote) {
 			return elementRenderId;
 		}
 		return 0;
@@ -137,25 +133,21 @@ public class TransparentNodeEntity extends NodeBlockEntity implements ISidedInve
 			if (elementRender == null) {
 				AxisAlignedBB bb = Blocks.stone.getCollisionBoundingBoxFromPool(worldObj, xCoord, yCoord, zCoord);
 				if (par5AxisAlignedBB.intersectsWith(bb)) list.add(bb);
-			}
-			else {
+			} else {
 				elementRender.transparentNodedescriptor.addCollisionBoxesToList(par5AxisAlignedBB, list, this);
 			}
-		}
-		else {
+		} else {
 			TransparentNode node = (TransparentNode) getNode();
 			if (node == null) {
 				AxisAlignedBB bb = Blocks.stone.getCollisionBoundingBoxFromPool(worldObj, xCoord, yCoord, zCoord);
 				if (par5AxisAlignedBB.intersectsWith(bb)) list.add(bb);
-			}
-			else {
+			} else {
 				node.element.transparentNodeDescriptor.addCollisionBoxesToList(par5AxisAlignedBB, list, this);
 			}
 		}
 	}
 
-	public void serverPacketUnserialize(DataInputStream stream)
-	{
+	public void serverPacketUnserialize(DataInputStream stream) {
 		super.serverPacketUnserialize(stream);
 		if (elementRender != null)
 			elementRender.serverPacketUnserialize(stream);
@@ -188,7 +180,7 @@ public class TransparentNodeEntity extends NodeBlockEntity implements ISidedInve
 
 	ISidedInventory getSidedInventory() {
 		if (worldObj.isRemote) {
-			if(elementRender == null) return FakeSideInventory.getInstance();
+			if (elementRender == null) return FakeSideInventory.getInstance();
 			IInventory i = elementRender.getInventory();
 			if (i != null) {
 				if (i instanceof ISidedInventory)
@@ -197,8 +189,9 @@ public class TransparentNodeEntity extends NodeBlockEntity implements ISidedInve
 		} else {
 			Node node = getNode();
 			if (node != null && node instanceof TransparentNode) {
-				TransparentNode tn = (TransparentNode)node;
-				IInventory i = tn.getInventory(null);;
+				TransparentNode tn = (TransparentNode) node;
+				IInventory i = tn.getInventory(null);
+				;
 				if (i != null) {
 					if (i instanceof ISidedInventory)
 						return (ISidedInventory) i;

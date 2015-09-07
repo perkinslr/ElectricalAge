@@ -34,8 +34,8 @@ public class SixNodeBlock extends NodeBlock {
 	// public static ArrayList<Integer> repertoriedItemStackId = new ArrayList<Integer>();
 
 	// private IIcon icon;
-	public SixNodeBlock(Material material, Class tileEntityClass) {
-		super(material, tileEntityClass, 0);
+	public SixNodeBlock(Material material, Class<SixNodeEntity> tileEntityClassProxy) {
+		super(material, tileEntityClassProxy, 0);
 
 		// setBlockTextureName("eln:air");
 	}

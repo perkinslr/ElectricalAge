@@ -105,4 +105,3 @@ public class TransparentNodeEntityWithSiededInv extends TransparentNodeEntity im
 		return getSidedInventory().canExtractItem(var1, var2, var3);
 	}
 }
-// && 

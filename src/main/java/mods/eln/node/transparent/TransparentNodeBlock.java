@@ -20,8 +20,7 @@ import net.minecraft.world.World;
 
 public class TransparentNodeBlock extends NodeBlock {
 	
-	public TransparentNodeBlock( Material material,
-			Class tileEntityClass) {
+	public TransparentNodeBlock(Material material, Class tileEntityClass) {
 		super( material, tileEntityClass, 0);
 		
 	}
