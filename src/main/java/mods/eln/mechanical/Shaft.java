@@ -6,6 +6,8 @@ import mods.eln.misc.INBTTReady;
 import mods.eln.node.NodeManager;
 import mods.eln.node.transparent.TransparentNode;
 import mods.eln.node.transparent.TransparentNodeElement;
+import mods.eln.sim.process.destruct.ShaftSpeedWatchdog;
+import mods.eln.transparentnode.generator.GeneratorElement;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
@@ -119,4 +121,17 @@ public class Shaft implements INBTTReady {
         nbt.setFloat(str + "rads", rads);
     }
 
+
+    final static float absoluteMaximumShaftSpeed = 3200;
+
+    public ShaftSpeedWatchdog createDefaultWatchdog(ShaftElement shaftElement) {
+        ShaftSpeedWatchdog shaftSpeedWatchdog = new ShaftSpeedWatchdog(shaftElement, absoluteMaximumShaftSpeed);
+        return shaftSpeedWatchdog;
+    }
+
+    final float defaultDragPerRad = 0.02f;
+
+    public double getDefaultDrag() {
+        return getRads() * defaultDragPerRad;
+    }
 }

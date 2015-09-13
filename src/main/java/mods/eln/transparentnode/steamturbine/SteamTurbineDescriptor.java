@@ -26,7 +26,7 @@ public class SteamTurbineDescriptor extends TransparentNodeDescriptor implements
     // TODO: This should be tied into the config options.
     public final float steamPower = 2;
 
-    public final float shaftWeight = 20;
+    public final float shaftWeight = 5;
 
 
     public SteamTurbineDescriptor(String name, Class ElementClass, Class RenderClass, Obj3D obj) {

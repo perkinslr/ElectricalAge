@@ -15,9 +15,14 @@ import mods.eln.sim.IProcess;
 import mods.eln.sim.PhysicalConstant;
 import mods.eln.sim.ThermalLoad;
 import mods.eln.sim.mna.SubSystem;
+import mods.eln.sim.mna.component.Resistor;
 import mods.eln.sim.mna.component.VoltageSource;
 import mods.eln.sim.mna.misc.IRootSystemPreStepProcess;
 import mods.eln.sim.nbt.NbtElectricalLoad;
+import mods.eln.sim.process.destruct.ShaftSpeedWatchdog;
+import mods.eln.sim.process.destruct.ValueWatchdog;
+import mods.eln.sim.process.destruct.VoltageStateWatchDog;
+import mods.eln.sim.process.destruct.WorldExplosion;
 import mods.eln.transparentnode.turbine.TurbineDescriptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,7 +37,9 @@ public class GeneratorElement extends TransparentNodeElement implements ShaftEle
     GeneratorDescriptor desc;
     Shaft shaft;
 
+    NbtElectricalLoad inputLoad = new NbtElectricalLoad("inputLoad");
     NbtElectricalLoad positiveLoad = new NbtElectricalLoad("positiveLoad");
+    Resistor inputToPositiveResistor = new Resistor(inputLoad, positiveLoad);
     VoltageSource electricalPowerSource = new VoltageSource("PowerSource", positiveLoad, null);
     GeneratorElectricalProcess electricalProcess = new GeneratorElectricalProcess();
     GeneratorShaftProcess shaftProcess = new GeneratorShaftProcess();
@@ -43,11 +50,18 @@ public class GeneratorElement extends TransparentNodeElement implements ShaftEle
         shaft = new Shaft(this);
 
         electricalLoadList.add(positiveLoad);
+        electricalLoadList.add(inputLoad);
         electricalComponentList.add(electricalPowerSource);
+        electricalComponentList.add(inputToPositiveResistor);
 
         slowProcessList.add(shaftProcess);
 
-        positiveLoad.setRs(0.1);
+        desc.cable.applyTo(inputLoad);
+        desc.cable.applyTo(inputToPositiveResistor);
+        desc.cable.applyTo(positiveLoad);
+
+        final WorldExplosion exp = new WorldExplosion(this).machineExplosion();
+        slowProcessList.add(shaft.createDefaultWatchdog(this).set(exp));
     }
 
     class GeneratorElectricalProcess implements IProcess, IRootSystemPreStepProcess {
@@ -61,6 +75,7 @@ public class GeneratorElement extends TransparentNodeElement implements ShaftEle
             // Some comments on what math is going on would be great.
             SubSystem.Th th = positiveLoad.getSubSystem().getTh(positiveLoad, electricalPowerSource);
             double Ut;
+            // TODO: Also, figure out how to make this thing act as an electric motor when underspeed.
             if (targetU < th.U) {
                 Ut = th.U;
             } else if (th.isHighImpedance()) {
@@ -94,12 +109,8 @@ public class GeneratorElement extends TransparentNodeElement implements ShaftEle
     class GeneratorShaftProcess implements IProcess {
         @Override
         public void process(double time) {
-            // TODO: No.
-            double eff = 1.0;
-
             double E = electricalPowerSource.getP() * time;
-            double heat = E * (1.0 - eff);
-
+            E += shaft.getDefaultDrag();
             shaft.addEnergy((float) -E);
         }
     }
@@ -121,7 +132,7 @@ public class GeneratorElement extends TransparentNodeElement implements ShaftEle
     @Override
     public ElectricalLoad getElectricalLoad(Direction side, LRDU lrdu) {
         if(lrdu != LRDU.Down) return null;
-        if(side == front) return positiveLoad;
+        if(side == front) return inputLoad;
         return null;
     }
 

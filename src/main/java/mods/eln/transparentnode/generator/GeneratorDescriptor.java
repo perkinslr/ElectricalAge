@@ -11,13 +11,13 @@ import mods.eln.sixnode.electricalcable.ElectricalCableDescriptor;
  * Created by svein on 08/09/15.
  */
 public class GeneratorDescriptor extends TransparentNodeDescriptor implements ShaftDescriptor {
-    private final ElectricalCableDescriptor cable;
+    final ElectricalCableDescriptor cable;
     private final Object obj;
     public final float powerOutPerDeltaU;
     public final float nominalP;
     private final Obj3D.Obj3DPart[] statics;
     private final Obj3D.Obj3DPart[] rotating;
-    public final float shaftWeight = 20;
+    public final float shaftWeight = 5;
     public IFunction RtoU;
 
     public GeneratorDescriptor(String name, Class ElementClass, Class RenderClass, ElectricalCableDescriptor cable, Obj3D obj, float nominalRads, float nominalU, float powerOutPerDeltaU, float nominalP) {
