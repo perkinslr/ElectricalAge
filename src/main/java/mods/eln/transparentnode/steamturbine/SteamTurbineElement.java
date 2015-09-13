@@ -45,6 +45,8 @@ public class SteamTurbineElement extends TransparentNodeElement implements Shaft
         turbineSlowProcess = new SteamTurbineSlowProcess();
         slowProcessList.add(turbineSlowProcess);
         shaft = new Shaft(this);
+
+        // TODO: Overspeed watchdog.
     }
 
     @Override
@@ -64,8 +66,8 @@ public class SteamTurbineElement extends TransparentNodeElement implements Shaft
 
     @Override
     public Direction[] getShaftConnectivity() {
-        return new Direction[] {
-            front.left(), front.right()
+        return new Direction[]{
+                front.left(), front.right()
         };
     }
 
@@ -101,19 +103,19 @@ public class SteamTurbineElement extends TransparentNodeElement implements Shaft
 
     @Override
     public void initialize() {
-        shaft.onNeighborBlockChange();
         reconnect();
+        shaft.connectShaft(this);
+    }
+
+    @Override
+    public void onBreakElement() {
+        super.onBreakElement();
+        shaft.disconnectShaft(this);
     }
 
     @Override
     public boolean onBlockActivated(EntityPlayer entityPlayer, Direction side, float vx, float vy, float vz) {
         return false;
-    }
-
-    @Override
-    public void onNeighborBlockChange() {
-        super.onNeighborBlockChange();
-        shaft.onNeighborBlockChange();
     }
 
     @Override

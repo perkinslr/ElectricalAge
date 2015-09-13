@@ -11,6 +11,7 @@ import mods.eln.transparentnode.generator.GeneratorElement;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by svein on 12/09/15.
@@ -21,7 +22,7 @@ public class Shaft implements INBTTReady {
     /**
      * All elements that are part of this shaft.
      */
-    ArrayList<ShaftElement> elements;
+    HashSet<ShaftElement> elements = new HashSet<>();
     /**
      * Radians/second rotation speed.
      */
@@ -30,8 +31,16 @@ public class Shaft implements INBTTReady {
 
 
     public Shaft(ShaftElement element) {
-        elements = new ArrayList<>();
         elements.add(element);
+    }
+
+    /**
+     * Creates a new, empty shaft. Only for rebuildNetwork.
+     * @param shaft Shaft to copy stats from.
+     */
+    private Shaft(Shaft shaft) {
+        rads = shaft.rads;
+        lastRadsPublished = shaft.lastRadsPublished;
     }
 
 
@@ -54,26 +63,80 @@ public class Shaft implements INBTTReady {
     }
 
     /**
-     * Convenience function that merges shafts for all adjacent blocks.
-     *
-     * Er, when they're pointed in the right direction.
+     * Connect a ShaftElement to a shaft network, merging any relevant adjacent networks.
+     * @param from The ShaftElement that changed.
      */
-    public void onNeighborBlockChange() {
+    public void connectShaft(ShaftElement from) {
+        final ArrayList<ShaftElement> neighbours = getNeighbours(from);
+        for (ShaftElement neighbour : neighbours) {
+            if (neighbour.getShaft() != this) {
+                mergeShafts(neighbour.getShaft());
+            }
+        }
+    }
+
+    /**
+     * Disconnect from a shaft network, because an element is dying.
+     * @param from The ShaftElement that's going away.
+     */
+    public void disconnectShaft(ShaftElement from) {
+        elements.remove(from);
+        from.setShaft(null);
+        // This may have split the network.
+        // At the moment there's no better way to figure this out than by exhaustively walking it to check for partitions.
+        rebuildNetwork();
+    }
+
+    /**
+     * Walk the entire network, splitting as necessary.
+     * Yes, this makes breaking a shaft block O(n). Not a problem right now.
+     */
+    private void rebuildNetwork() {
+        HashSet<ShaftElement> unseen = new HashSet<>(elements);
+        HashSet<ShaftElement> queue = new HashSet<>();
+        Shaft shaft = this;
+        while (unseen.size() > 0) {
+            shaft.elements.clear();
+            // Do a breadth-first search from an arbitrary element.
+            final ShaftElement start = unseen.iterator().next();
+            unseen.remove(start);
+            queue.add(start);
+            while (queue.size() > 0) {
+                final ShaftElement next = queue.iterator().next();
+                queue.remove(next);
+                shaft.elements.add(next);
+                next.setShaft(shaft);
+                final ArrayList<ShaftElement> neighbours = getNeighbours(next);
+                for (ShaftElement neighbour : neighbours) {
+                    if (unseen.contains(neighbour)) {
+                        unseen.remove(neighbour);
+                        queue.add(neighbour);
+                    }
+                }
+            }
+            // We ran out of network. Any elements remaining in unseen should thus form a new network.
+            shaft = new Shaft(this);
+        }
+    }
+
+    private ArrayList<ShaftElement> getNeighbours(ShaftElement from) {
         Coordonate c = new Coordonate();
-        for (ShaftElement e : new ArrayList<>(elements)) {
-            Coordonate ec = e.coordonate();
-            for (Direction dir : e.getShaftConnectivity()) {
-                c.copyFrom(ec);
-                c.move(dir);
-                TransparentNodeElement n = NodeManager.instance.getTransparentNodeFromCoordinate(c);
-                if (n instanceof ShaftElement) {
-                    final ShaftElement shaftElement = (ShaftElement) n;
-                    if (shaftElement.getShaft() != this) {
-                        mergeShafts(shaftElement.getShaft());
+        ArrayList<ShaftElement> ret = new ArrayList<>(6);
+        for (Direction dir : from.getShaftConnectivity()) {
+            c.copyFrom(from.coordonate());
+            c.move(dir);
+            TransparentNodeElement n = NodeManager.instance.getTransparentNodeFromCoordinate(c);
+            if (n instanceof ShaftElement) {
+                final ShaftElement to = (ShaftElement) n;
+                for (Direction dir2 : to.getShaftConnectivity()) {
+                    if (dir2.getInverse() == dir) {
+                        ret.add(to);
+                        break;
                     }
                 }
             }
         }
+        return ret;
     }
 
     private float getEnergyFactor() {
