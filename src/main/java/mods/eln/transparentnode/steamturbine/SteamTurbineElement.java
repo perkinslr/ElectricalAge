@@ -101,6 +101,7 @@ public class SteamTurbineElement extends TransparentNodeElement implements Shaft
 
     @Override
     public void initialize() {
+        shaft.onNeighborBlockChange();
         reconnect();
     }
 

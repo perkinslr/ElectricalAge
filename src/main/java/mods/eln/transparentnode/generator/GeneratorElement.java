@@ -151,7 +151,8 @@ public class GeneratorElement extends TransparentNodeElement implements ShaftEle
 
     @Override
     public void initialize() {
-        connect();
+        shaft.onNeighborBlockChange();
+        reconnect();
     }
 
     @Override
