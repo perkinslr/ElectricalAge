@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.*;
  */
 public class TransparentNodeElementFluidHandler implements IFluidHandler, INBTTReady {
 
+    private Fluid filter;
     FluidTank tank;
 
     /**
@@ -21,8 +22,14 @@ public class TransparentNodeElementFluidHandler implements IFluidHandler, INBTTR
         tank = new FluidTank(tankSize);
     }
 
+    public void setFilter(Fluid filter) {
+        assert filter != null;
+        this.filter = filter;
+    }
+
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+        if (filter != null && resource.getFluid().getID() != filter.getID()) return 0;
         return tank.fill(resource, doFill);
     }
 
@@ -41,6 +48,7 @@ public class TransparentNodeElementFluidHandler implements IFluidHandler, INBTTR
 
     @Override
     public boolean canFill(ForgeDirection from, Fluid fluid) {
+        if (filter != null && fluid.getID() != filter.getID()) return false;
         return true;
     }
 

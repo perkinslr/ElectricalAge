@@ -46,6 +46,8 @@ public class SteamTurbineElement extends TransparentNodeElement implements Shaft
         slowProcessList.add(turbineSlowProcess);
         shaft = new Shaft(this);
 
+        steamTank.setFilter(steam);
+
         // TODO: Overspeed watchdog.
     }
 
