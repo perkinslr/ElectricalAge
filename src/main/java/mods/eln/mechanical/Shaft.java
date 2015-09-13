@@ -43,8 +43,10 @@ public class Shaft implements INBTTReady {
         // For now, let's be nice.
         rads = Math.min(rads, other.rads);
 
+        assert other != this;
         for (ShaftElement element : other.elements) {
             elements.add(element);
+            element.setShaft(this);
         }
         other.elements.clear();
     }
@@ -66,7 +68,6 @@ public class Shaft implements INBTTReady {
                     final ShaftElement shaftElement = (ShaftElement) n;
                     if (shaftElement.getShaft() != this) {
                         mergeShafts(shaftElement.getShaft());
-                        shaftElement.setShaft(this);
                     }
                 }
             }
@@ -75,6 +76,7 @@ public class Shaft implements INBTTReady {
 
     private float getEnergyFactor() {
         float mass = 0;
+        assert elements.size() != 0;
         for (ShaftElement e : elements) {
             mass += e.getMass();
         }
