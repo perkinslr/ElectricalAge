@@ -2,14 +2,27 @@ package mods.eln.mechanical;
 
 import mods.eln.misc.BoundingBox;
 import mods.eln.misc.Obj3D;
+import mods.eln.node.transparent.TransparentNodeDescriptor;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 /**
- * Created by svein on 08/09/15.
+ * Created by svein on 15/09/15.
  */
-public interface ShaftDescriptor {
-    default void drawShaft(Obj3D.Obj3DPart statics[], Obj3D.Obj3DPart rotating[], float angle) {
+public class ShaftDescriptor extends TransparentNodeDescriptor {
+    protected Obj3D.Obj3DPart[] statics;
+    protected Obj3D.Obj3DPart[] rotating;
+    public final float shaftWeight = 5;
+
+    public ShaftDescriptor(String name, Class ElementClass, Class RenderClass) {
+        super(name, ElementClass, RenderClass);
+    }
+
+    public void draw(float angle) {
+        drawShaft(statics, rotating, angle);
+    }
+
+    public void drawShaft(Obj3D.Obj3DPart statics[], Obj3D.Obj3DPart rotating[], float angle) {
         assert rotating.length > 0;
         for (Obj3D.Obj3DPart part : statics) {
             part.draw();

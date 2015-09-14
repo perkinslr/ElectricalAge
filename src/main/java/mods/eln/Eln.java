@@ -33,6 +33,7 @@ import mods.eln.item.electricalitem.PortableOreScannerItem.RenderStorage.OreScan
 import mods.eln.item.regulator.IRegulatorDescriptor;
 import mods.eln.item.regulator.RegulatorAnalogDescriptor;
 import mods.eln.item.regulator.RegulatorOnOffDescriptor;
+import mods.eln.mechanical.ShaftDescriptor;
 import mods.eln.misc.*;
 import mods.eln.misc.series.SerieEE;
 import mods.eln.node.*;
@@ -2570,7 +2571,7 @@ public class Eln {
 
 		{
 			subId = 9;
-			SteamTurbineDescriptor desc = new SteamTurbineDescriptor(
+			ShaftDescriptor desc = new SteamTurbineDescriptor(
 					"Steam Turbine",
 					SteamTurbineElement.class,
 					SteamTurbineRender.class,

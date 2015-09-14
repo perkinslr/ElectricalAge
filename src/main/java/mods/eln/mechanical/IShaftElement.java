@@ -6,7 +6,7 @@ import mods.eln.misc.Direction;
 /**
  * Created by svein on 12/09/15.
  */
-public interface ShaftElement {
+public interface IShaftElement {
     Shaft getShaft();
 
     void setShaft(Shaft shaft);

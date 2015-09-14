@@ -2,15 +2,11 @@ package mods.eln.mechanical.steamturbine;
 
 import mods.eln.mechanical.ShaftDescriptor;
 import mods.eln.misc.Obj3D;
-import mods.eln.node.transparent.TransparentNodeDescriptor;
 
 /**
  * Created by svein on 06/09/15.
  */
-public class SteamTurbineDescriptor extends TransparentNodeDescriptor implements ShaftDescriptor {
-    private final Obj3D obj;
-    private final Obj3D.Obj3DPart[] statics;
-    private final Obj3D.Obj3DPart[] rotating;
+public class SteamTurbineDescriptor extends ShaftDescriptor {
     /**
      * Overall time for steam input changes to take effect, in seconds.
      */
@@ -25,12 +21,8 @@ public class SteamTurbineDescriptor extends TransparentNodeDescriptor implements
     // TODO: This should be tied into the config options.
     public final float steamPower = 2;
 
-    public final float shaftWeight = 5;
-
-
     public SteamTurbineDescriptor(String name, Class ElementClass, Class RenderClass, Obj3D obj) {
         super(name, ElementClass, RenderClass);
-        this.obj = obj;
 
         this.statics = new Obj3D.Obj3DPart[]{
                 obj.getPart("Cowl"),
@@ -42,7 +34,4 @@ public class SteamTurbineDescriptor extends TransparentNodeDescriptor implements
         };
     }
 
-    public void draw(float angle) {
-        drawShaft(statics, rotating, angle);
-    }
 }

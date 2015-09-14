@@ -20,7 +20,7 @@ public class Shaft implements INBTTReady {
     /**
      * All elements that are part of this shaft.
      */
-    HashSet<ShaftElement> elements = new HashSet<>();
+    HashSet<IShaftElement> elements = new HashSet<>();
     /**
      * Radians/second rotation speed.
      */
@@ -28,7 +28,7 @@ public class Shaft implements INBTTReady {
     private float lastRadsPublished;
 
 
-    public Shaft(ShaftElement element) {
+    public Shaft(IShaftElement element) {
         elements.add(element);
     }
 
@@ -53,7 +53,7 @@ public class Shaft implements INBTTReady {
         rads = Math.min(rads, other.rads);
 
         assert other != this;
-        for (ShaftElement element : other.elements) {
+        for (IShaftElement element : other.elements) {
             elements.add(element);
             element.setShaft(this);
         }
@@ -61,12 +61,12 @@ public class Shaft implements INBTTReady {
     }
 
     /**
-     * Connect a ShaftElement to a shaft network, merging any relevant adjacent networks.
-     * @param from The ShaftElement that changed.
+     * Connect a IShaftElement to a shaft network, merging any relevant adjacent networks.
+     * @param from The IShaftElement that changed.
      */
-    public void connectShaft(ShaftElement from) {
-        final ArrayList<ShaftElement> neighbours = getNeighbours(from);
-        for (ShaftElement neighbour : neighbours) {
+    public void connectShaft(IShaftElement from) {
+        final ArrayList<IShaftElement> neighbours = getNeighbours(from);
+        for (IShaftElement neighbour : neighbours) {
             if (neighbour.getShaft() != this) {
                 mergeShafts(neighbour.getShaft());
             }
@@ -75,9 +75,9 @@ public class Shaft implements INBTTReady {
 
     /**
      * Disconnect from a shaft network, because an element is dying.
-     * @param from The ShaftElement that's going away.
+     * @param from The IShaftElement that's going away.
      */
-    public void disconnectShaft(ShaftElement from) {
+    public void disconnectShaft(IShaftElement from) {
         elements.remove(from);
         from.setShaft(null);
         // This may have split the network.
@@ -90,22 +90,22 @@ public class Shaft implements INBTTReady {
      * Yes, this makes breaking a shaft block O(n). Not a problem right now.
      */
     private void rebuildNetwork() {
-        HashSet<ShaftElement> unseen = new HashSet<>(elements);
-        HashSet<ShaftElement> queue = new HashSet<>();
+        HashSet<IShaftElement> unseen = new HashSet<>(elements);
+        HashSet<IShaftElement> queue = new HashSet<>();
         Shaft shaft = this;
         while (unseen.size() > 0) {
             shaft.elements.clear();
             // Do a breadth-first search from an arbitrary element.
-            final ShaftElement start = unseen.iterator().next();
+            final IShaftElement start = unseen.iterator().next();
             unseen.remove(start);
             queue.add(start);
             while (queue.size() > 0) {
-                final ShaftElement next = queue.iterator().next();
+                final IShaftElement next = queue.iterator().next();
                 queue.remove(next);
                 shaft.elements.add(next);
                 next.setShaft(shaft);
-                final ArrayList<ShaftElement> neighbours = getNeighbours(next);
-                for (ShaftElement neighbour : neighbours) {
+                final ArrayList<IShaftElement> neighbours = getNeighbours(next);
+                for (IShaftElement neighbour : neighbours) {
                     if (unseen.contains(neighbour)) {
                         unseen.remove(neighbour);
                         queue.add(neighbour);
@@ -117,15 +117,15 @@ public class Shaft implements INBTTReady {
         }
     }
 
-    private ArrayList<ShaftElement> getNeighbours(ShaftElement from) {
+    private ArrayList<IShaftElement> getNeighbours(IShaftElement from) {
         Coordonate c = new Coordonate();
-        ArrayList<ShaftElement> ret = new ArrayList<>(6);
+        ArrayList<IShaftElement> ret = new ArrayList<>(6);
         for (Direction dir : from.getShaftConnectivity()) {
             c.copyFrom(from.coordonate());
             c.move(dir);
             TransparentNodeElement n = NodeManager.instance.getTransparentNodeFromCoordinate(c);
-            if (n instanceof ShaftElement) {
-                final ShaftElement to = (ShaftElement) n;
+            if (n instanceof IShaftElement) {
+                final IShaftElement to = (IShaftElement) n;
                 for (Direction dir2 : to.getShaftConnectivity()) {
                     if (dir2.getInverse() == dir) {
                         ret.add(to);
@@ -140,7 +140,7 @@ public class Shaft implements INBTTReady {
     private float getEnergyFactor() {
         float mass = 0;
         assert elements.size() != 0;
-        for (ShaftElement e : elements) {
+        for (IShaftElement e : elements) {
             mass += e.getMass();
         }
         assert mass != 0;
@@ -159,7 +159,7 @@ public class Shaft implements INBTTReady {
 //        assert rads >= 0;
 
         if (lastRadsPublished > rads * 1.05 || lastRadsPublished < rads * 0.95) {
-            for (ShaftElement element : elements) {
+            for (IShaftElement element : elements) {
                 element.needPublish();
             }
             lastRadsPublished = rads;
@@ -185,7 +185,7 @@ public class Shaft implements INBTTReady {
 
     final static float absoluteMaximumShaftSpeed = 3200;
 
-    public ShaftSpeedWatchdog createDefaultWatchdog(ShaftElement shaftElement) {
+    public ShaftSpeedWatchdog createDefaultWatchdog(IShaftElement shaftElement) {
         ShaftSpeedWatchdog shaftSpeedWatchdog = new ShaftSpeedWatchdog(shaftElement, absoluteMaximumShaftSpeed);
         return shaftSpeedWatchdog;
     }

@@ -2,7 +2,9 @@ package mods.eln.mechanical.generator;
 
 import mods.eln.Eln;
 import mods.eln.mechanical.Shaft;
-import mods.eln.mechanical.ShaftElement;
+import mods.eln.mechanical.IShaftElement;
+import mods.eln.mechanical.ShaftDescriptor;
+import mods.eln.mechanical.SimpleShaftElement;
 import mods.eln.misc.Direction;
 import mods.eln.misc.LRDU;
 import mods.eln.misc.Utils;
@@ -28,9 +30,8 @@ import java.io.IOException;
 /**
  * Created by svein on 08/09/15.
  */
-public class GeneratorElement extends TransparentNodeElement implements ShaftElement {
+public class GeneratorElement extends SimpleShaftElement {
     GeneratorDescriptor desc;
-    Shaft shaft;
 
     NbtElectricalLoad inputLoad = new NbtElectricalLoad("inputLoad");
     NbtElectricalLoad positiveLoad = new NbtElectricalLoad("positiveLoad");
@@ -40,9 +41,8 @@ public class GeneratorElement extends TransparentNodeElement implements ShaftEle
     GeneratorShaftProcess shaftProcess = new GeneratorShaftProcess();
 
     public GeneratorElement(TransparentNode transparentNode, TransparentNodeDescriptor descriptor) {
-        super(transparentNode, descriptor);
+        super(transparentNode, (ShaftDescriptor) descriptor);
         desc = (GeneratorDescriptor) descriptor;
-        shaft = new Shaft(this);
 
         electricalLoadList.add(positiveLoad);
         electricalLoadList.add(inputLoad);
@@ -54,9 +54,6 @@ public class GeneratorElement extends TransparentNodeElement implements ShaftEle
         desc.cable.applyTo(inputLoad);
         desc.cable.applyTo(inputToPositiveResistor);
         desc.cable.applyTo(positiveLoad);
-
-        final WorldExplosion exp = new WorldExplosion(this).machineExplosion();
-        slowProcessList.add(shaft.createDefaultWatchdog(this).set(exp));
     }
 
     class GeneratorElectricalProcess implements IProcess, IRootSystemPreStepProcess {
@@ -110,7 +107,6 @@ public class GeneratorElement extends TransparentNodeElement implements ShaftEle
         }
     }
 
-
     @Override
     public void connectJob() {
         super.connectJob();
@@ -122,7 +118,6 @@ public class GeneratorElement extends TransparentNodeElement implements ShaftEle
         super.disconnectJob();
         Eln.simulator.mna.removeProcess(electricalProcess);
     }
-
 
     @Override
     public ElectricalLoad getElectricalLoad(Direction side, LRDU lrdu) {
@@ -156,63 +151,7 @@ public class GeneratorElement extends TransparentNodeElement implements ShaftEle
     }
 
     @Override
-    public void initialize() {
-        reconnect();
-        shaft.connectShaft(this);
-    }
-
-    @Override
-    public void onBreakElement() {
-        super.onBreakElement();
-        shaft.disconnectShaft(this);
-    }
-
-    @Override
     public boolean onBlockActivated(EntityPlayer entityPlayer, Direction side, float vx, float vy, float vz) {
         return false;
-    }
-
-    @Override
-    public Shaft getShaft() {
-        return shaft;
-    }
-
-    @Override
-    public void setShaft(Shaft shaft) {
-        this.shaft = shaft;
-    }
-
-    @Override
-    public float getMass() {
-        return desc.shaftWeight;
-    }
-
-    @Override
-    public Direction[] getShaftConnectivity() {
-        return new Direction[] {
-                front.left(), front.right()
-        };
-    }
-
-    @Override
-    public void networkSerialize(DataOutputStream stream) {
-        super.networkSerialize(stream);
-        try {
-            stream.writeFloat(shaft.getRads());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        shaft.readFromNBT(nbt, "shaft");
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        shaft.writeToNBT(nbt, "shaft");
     }
 }
