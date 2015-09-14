@@ -4,10 +4,8 @@ import mods.eln.misc.Coordonate;
 import mods.eln.misc.Direction;
 import mods.eln.misc.INBTTReady;
 import mods.eln.node.NodeManager;
-import mods.eln.node.transparent.TransparentNode;
 import mods.eln.node.transparent.TransparentNodeElement;
 import mods.eln.sim.process.destruct.ShaftSpeedWatchdog;
-import mods.eln.transparentnode.generator.GeneratorElement;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;

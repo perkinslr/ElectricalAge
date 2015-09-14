@@ -1,4 +1,4 @@
-package mods.eln.transparentnode.generator;
+package mods.eln.mechanical.generator;
 
 import mods.eln.Eln;
 import mods.eln.mechanical.Shaft;
@@ -12,18 +12,13 @@ import mods.eln.node.transparent.TransparentNodeDescriptor;
 import mods.eln.node.transparent.TransparentNodeElement;
 import mods.eln.sim.ElectricalLoad;
 import mods.eln.sim.IProcess;
-import mods.eln.sim.PhysicalConstant;
 import mods.eln.sim.ThermalLoad;
 import mods.eln.sim.mna.SubSystem;
 import mods.eln.sim.mna.component.Resistor;
 import mods.eln.sim.mna.component.VoltageSource;
 import mods.eln.sim.mna.misc.IRootSystemPreStepProcess;
 import mods.eln.sim.nbt.NbtElectricalLoad;
-import mods.eln.sim.process.destruct.ShaftSpeedWatchdog;
-import mods.eln.sim.process.destruct.ValueWatchdog;
-import mods.eln.sim.process.destruct.VoltageStateWatchDog;
 import mods.eln.sim.process.destruct.WorldExplosion;
-import mods.eln.transparentnode.turbine.TurbineDescriptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 

@@ -1,4 +1,4 @@
-package mods.eln.transparentnode.generator;
+package mods.eln.mechanical.generator;
 
 import mods.eln.mechanical.ShaftDescriptor;
 import mods.eln.misc.IFunction;

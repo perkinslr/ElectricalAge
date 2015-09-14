@@ -1,6 +1,5 @@
-package mods.eln.transparentnode.steamturbine;
+package mods.eln.mechanical.steamturbine;
 
-import mods.eln.mechanical.Shaft;
 import mods.eln.mechanical.ShaftDescriptor;
 import mods.eln.misc.Obj3D;
 import mods.eln.node.transparent.TransparentNodeDescriptor;

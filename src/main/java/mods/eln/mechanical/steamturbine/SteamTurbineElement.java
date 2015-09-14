@@ -1,8 +1,11 @@
-package mods.eln.transparentnode.steamturbine;
+package mods.eln.mechanical.steamturbine;
 
 import mods.eln.mechanical.Shaft;
 import mods.eln.mechanical.ShaftElement;
-import mods.eln.misc.*;
+import mods.eln.misc.Direction;
+import mods.eln.misc.LRDU;
+import mods.eln.misc.RcInterpolator;
+import mods.eln.misc.Utils;
 import mods.eln.node.transparent.TransparentNode;
 import mods.eln.node.transparent.TransparentNodeDescriptor;
 import mods.eln.node.transparent.TransparentNodeElement;

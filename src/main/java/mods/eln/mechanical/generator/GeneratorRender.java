@@ -1,10 +1,8 @@
-package mods.eln.transparentnode.generator;
+package mods.eln.mechanical.generator;
 
 import mods.eln.node.transparent.TransparentNodeDescriptor;
 import mods.eln.node.transparent.TransparentNodeElementRender;
 import mods.eln.node.transparent.TransparentNodeEntity;
-import mods.eln.node.transparent.TransparentNodeRender;
-import mods.eln.transparentnode.steamturbine.SteamTurbineDescriptor;
 
 import java.io.DataInputStream;
 import java.io.IOException;

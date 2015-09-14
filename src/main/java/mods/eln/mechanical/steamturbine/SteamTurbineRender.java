@@ -1,4 +1,4 @@
-package mods.eln.transparentnode.steamturbine;
+package mods.eln.mechanical.steamturbine;
 
 import mods.eln.node.transparent.TransparentNodeDescriptor;
 import mods.eln.node.transparent.TransparentNodeElementRender;
