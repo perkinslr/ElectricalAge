@@ -37,7 +37,7 @@ public class GeneratorElement extends SimpleShaftElement {
     GeneratorShaftProcess shaftProcess = new GeneratorShaftProcess();
 
     NbtThermalLoad thermal = new NbtThermalLoad("thermal");
-    ElectricalLoadHeatThermalLoad heater = new ElectricalLoadHeatThermalLoad(inputLoad, thermal);
+    ElectricalLoadHeatThermalLoad heater;
 
     ThermalLoadWatchDog thermalLoadWatchDog = new ThermalLoadWatchDog();
 
@@ -60,8 +60,10 @@ public class GeneratorElement extends SimpleShaftElement {
         desc.thermalLoadInitializer.applyTo(thermalLoadWatchDog);
         thermal.setAsSlow();
         thermalLoadList.add(thermal);
-        slowProcessList.add(heater);
         thermalLoadWatchDog.set(thermal).set(new WorldExplosion(this).machineExplosion());
+
+        heater = new ElectricalLoadHeatThermalLoad(inputLoad, thermal);
+        thermalFastProcessList.add(heater);
     }
 
     class GeneratorElectricalProcess implements IProcess, IRootSystemPreStepProcess {
@@ -88,7 +90,7 @@ public class GeneratorElement extends SimpleShaftElement {
                 Ut = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
             }
 
-            electricalPowerSource.setU(Ut);
+                electricalPowerSource.setU(Ut);
         }
 
         @Override
