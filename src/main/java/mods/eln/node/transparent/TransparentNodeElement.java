@@ -267,9 +267,15 @@ public abstract class TransparentNodeElement implements  GhostObserver,IPlayer{
 		node.dropElement(node.removedByPlayer);
 
 	}
+
 	public ItemStack getDropItemStack()
 	{
-		ItemStack itemStack =  new ItemStack(Eln.transparentNodeBlock, 1, node.elementId);
+		ItemStack itemStack;
+		if (Eln.transparentNodeItem.getDescriptor(node.elementId) == null) {
+			itemStack = new ItemStack(Eln.transparentNodeWithFluidBlock, 1, node.elementId);
+		} else {
+			itemStack = new ItemStack(Eln.transparentNodeBlock, 1, node.elementId);
+		}
 		itemStack.setTagCompound(getItemStackNBT());
 		return itemStack;
 	}	
