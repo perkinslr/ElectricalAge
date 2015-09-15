@@ -3,6 +3,7 @@ package mods.eln.mechanical;
 import mods.eln.misc.BoundingBox;
 import mods.eln.misc.Obj3D;
 import mods.eln.node.transparent.TransparentNodeDescriptor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
@@ -39,5 +40,21 @@ public class ShaftDescriptor extends TransparentNodeDescriptor {
         for (Obj3D.Obj3DPart part : rotating) {
             part.draw();
         }
+    }
+
+    @Override
+    public boolean handleRenderType(ItemStack item, ItemRenderType type) {
+        return true;
+    }
+
+    @Override
+    public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item,
+                                         ItemRendererHelper helper) {
+        return true;
+    }
+
+    @Override
+    public boolean use2DIcon() {
+        return false;
     }
 }
