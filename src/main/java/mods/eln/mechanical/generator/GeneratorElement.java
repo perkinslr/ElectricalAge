@@ -54,6 +54,8 @@ public class GeneratorElement extends SimpleShaftElement {
         desc.cable.applyTo(inputLoad);
         desc.cable.applyTo(inputToPositiveResistor);
         desc.cable.applyTo(positiveLoad);
+
+        // TODO: Voltage watchdog.
     }
 
     class GeneratorElectricalProcess implements IProcess, IRootSystemPreStepProcess {
