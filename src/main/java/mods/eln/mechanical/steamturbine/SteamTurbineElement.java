@@ -4,10 +4,7 @@ import mods.eln.mechanical.Shaft;
 import mods.eln.mechanical.IShaftElement;
 import mods.eln.mechanical.ShaftDescriptor;
 import mods.eln.mechanical.SimpleShaftElement;
-import mods.eln.misc.Direction;
-import mods.eln.misc.LRDU;
-import mods.eln.misc.RcInterpolator;
-import mods.eln.misc.Utils;
+import mods.eln.misc.*;
 import mods.eln.node.transparent.TransparentNode;
 import mods.eln.node.transparent.TransparentNodeDescriptor;
 import mods.eln.node.transparent.TransparentNodeElement;
@@ -23,9 +20,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
 
 /**
  * This is a steam turbine.
@@ -52,7 +46,7 @@ public class SteamTurbineElement extends SimpleShaftElement {
         steamTank.setFilter(steam);
   }
 
-    class SteamTurbineSlowProcess implements IProcess {
+    class SteamTurbineSlowProcess implements IProcess, INBTTReady {
         RcInterpolator rc = new RcInterpolator(descriptor.steamInertia);
 
         @Override
@@ -67,6 +61,16 @@ public class SteamTurbineElement extends SimpleShaftElement {
             float power = steam * descriptor.steamPower;
             float energy = (float) (power * time);
             shaft.addEnergy(energy);
+        }
+
+        @Override
+        public void readFromNBT(NBTTagCompound nbt, String str) {
+            rc.readFromNBT(nbt, str);
+        }
+
+        @Override
+        public void writeToNBT(NBTTagCompound nbt, String str) {
+            rc.writeToNBT(nbt, str);
         }
     }
     @Override
@@ -103,12 +107,14 @@ public class SteamTurbineElement extends SimpleShaftElement {
     public void writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         steamTank.writeToNBT(nbt, "tank");
+        turbineSlowProcess.writeToNBT(nbt, "proc");
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         steamTank.readFromNBT(nbt, "tank");
+        turbineSlowProcess.readFromNBT(nbt, "proc");
     }
 
 }
