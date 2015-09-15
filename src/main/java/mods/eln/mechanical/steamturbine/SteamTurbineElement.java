@@ -35,6 +35,8 @@ public class SteamTurbineElement extends SimpleShaftElement {
     TransparentNodeElementFluidHandler steamTank;
     SteamTurbineSlowProcess turbineSlowProcess;
 
+    float steamRate = 0;
+
     public SteamTurbineElement(TransparentNode transparentNode, TransparentNodeDescriptor descriptor) {
         super(transparentNode, (ShaftDescriptor) descriptor);
         this.descriptor = (SteamTurbineDescriptor) descriptor;
@@ -55,10 +57,10 @@ public class SteamTurbineElement extends SimpleShaftElement {
             float steam = ss != null ? ss.amount : 0;
             rc.setTarget((float) (steam / time));
             rc.step((float) time);
-            steam = rc.get();
+            steamRate = rc.get();
             // TODO: Make it inefficient at speeds other than optimal.
             // (Which of course correspond to the 800V output.)
-            float power = steam * descriptor.steamPower;
+            float power = steamRate * descriptor.steamPower;
             float energy = (float) (power * time);
             shaft.addEnergy(energy);
         }
@@ -95,7 +97,7 @@ public class SteamTurbineElement extends SimpleShaftElement {
 
     @Override
     public String thermoMeterString(Direction side) {
-        return null;
+        return steamRate + " mB/s";
     }
 
     @Override

@@ -64,6 +64,8 @@ public class GeneratorElement extends SimpleShaftElement {
 
         heater = new ElectricalLoadHeatThermalLoad(inputLoad, thermal);
         thermalFastProcessList.add(heater);
+
+        // TODO: Add whine. Sound good.
     }
 
     class GeneratorElectricalProcess implements IProcess, IRootSystemPreStepProcess {
