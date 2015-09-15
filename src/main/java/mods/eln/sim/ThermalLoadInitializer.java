@@ -1,6 +1,7 @@
 package mods.eln.sim;
 
 import mods.eln.Eln;
+import mods.eln.sim.process.destruct.ThermalLoadWatchDog;
 
 public class ThermalLoadInitializer {
 
@@ -28,16 +29,21 @@ public class ThermalLoadInitializer {
 		setMaximalPower(P);
 	}*/
 	
-	public void setMaximalPower(double P) {
+	public ThermalLoadInitializer setMaximalPower(double P) {
 		C = P * heatingTao / (warmLimit);
 		Rp = warmLimit / P;
 		Rs = conductionTao / C / 2;
 		
 		Eln.simulator.checkThermalLoad(Rs, Rp, C);
+		return this;
 	}
 	
 	public void applyTo(ThermalLoad load) {
 		load.set(Rs, Rp, C);
+	}
+
+	public void applyTo(ThermalLoadWatchDog watchDog) {
+		watchDog.set(this);
 	}
 
 	public ThermalLoadInitializer copy() {

@@ -79,7 +79,7 @@ public class Shaft implements INBTTReady {
      */
     public void disconnectShaft(IShaftElement from) {
         elements.remove(from);
-        from.setShaft(null);
+        from.setShaft(new Shaft(from));
         // This may have split the network.
         // At the moment there's no better way to figure this out than by exhaustively walking it to check for partitions.
         rebuildNetwork();
@@ -183,7 +183,7 @@ public class Shaft implements INBTTReady {
     }
 
 
-    final static float absoluteMaximumShaftSpeed = 3200;
+    final static float absoluteMaximumShaftSpeed = 1200;
 
     public ShaftSpeedWatchdog createDefaultWatchdog(IShaftElement shaftElement) {
         ShaftSpeedWatchdog shaftSpeedWatchdog = new ShaftSpeedWatchdog(shaftElement, absoluteMaximumShaftSpeed);

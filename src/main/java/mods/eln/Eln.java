@@ -2592,7 +2592,8 @@ public class Eln {
 					obj.getObj("Generator"),
 					nominalRads, nominalU,
 					nominalP / (nominalU / 25),
-					nominalP
+					nominalP,
+					sixNodeThermalLoadInitializer.copy().setMaximalPower(nominalP)
 					);
 			transparentNodeItem.addDescriptor(subId + (id << 6), desc);
 		}

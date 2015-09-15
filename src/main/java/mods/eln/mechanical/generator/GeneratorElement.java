@@ -1,8 +1,6 @@
 package mods.eln.mechanical.generator;
 
 import mods.eln.Eln;
-import mods.eln.mechanical.Shaft;
-import mods.eln.mechanical.IShaftElement;
 import mods.eln.mechanical.ShaftDescriptor;
 import mods.eln.mechanical.SimpleShaftElement;
 import mods.eln.misc.Direction;
@@ -11,7 +9,6 @@ import mods.eln.misc.Utils;
 import mods.eln.node.NodeBase;
 import mods.eln.node.transparent.TransparentNode;
 import mods.eln.node.transparent.TransparentNodeDescriptor;
-import mods.eln.node.transparent.TransparentNodeElement;
 import mods.eln.sim.ElectricalLoad;
 import mods.eln.sim.IProcess;
 import mods.eln.sim.ThermalLoad;
@@ -20,12 +17,11 @@ import mods.eln.sim.mna.component.Resistor;
 import mods.eln.sim.mna.component.VoltageSource;
 import mods.eln.sim.mna.misc.IRootSystemPreStepProcess;
 import mods.eln.sim.nbt.NbtElectricalLoad;
+import mods.eln.sim.nbt.NbtThermalLoad;
+import mods.eln.sim.process.destruct.ThermalLoadWatchDog;
 import mods.eln.sim.process.destruct.WorldExplosion;
+import mods.eln.sim.process.heater.ElectricalLoadHeatThermalLoad;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
 
 /**
  * Created by svein on 08/09/15.
@@ -39,6 +35,11 @@ public class GeneratorElement extends SimpleShaftElement {
     VoltageSource electricalPowerSource = new VoltageSource("PowerSource", positiveLoad, null);
     GeneratorElectricalProcess electricalProcess = new GeneratorElectricalProcess();
     GeneratorShaftProcess shaftProcess = new GeneratorShaftProcess();
+
+    NbtThermalLoad thermal = new NbtThermalLoad("thermal");
+    ElectricalLoadHeatThermalLoad heater = new ElectricalLoadHeatThermalLoad(inputLoad, thermal);
+
+    ThermalLoadWatchDog thermalLoadWatchDog = new ThermalLoadWatchDog();
 
     public GeneratorElement(TransparentNode transparentNode, TransparentNodeDescriptor descriptor) {
         super(transparentNode, (ShaftDescriptor) descriptor);
@@ -55,7 +56,12 @@ public class GeneratorElement extends SimpleShaftElement {
         desc.cable.applyTo(inputToPositiveResistor);
         desc.cable.applyTo(positiveLoad);
 
-        // TODO: Voltage watchdog.
+        desc.thermalLoadInitializer.applyTo(thermal);
+        desc.thermalLoadInitializer.applyTo(thermalLoadWatchDog);
+        thermal.setAsSlow();
+        thermalLoadList.add(thermal);
+        slowProcessList.add(heater);
+        thermalLoadWatchDog.set(thermal).set(new WorldExplosion(this).machineExplosion());
     }
 
     class GeneratorElectricalProcess implements IProcess, IRootSystemPreStepProcess {
@@ -81,16 +87,6 @@ public class GeneratorElement extends SimpleShaftElement {
                 double c = -desc.powerOutPerDeltaU * targetU;
                 Ut = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
             }
-
-            double i = (Ut - th.U) / th.R;
-            double p = i * Ut;
-            double pMax = desc.nominalP * 1.5;
-//            if (p > pMax) {
-//                Ut = (Math.sqrt(th.U * th.U + 4 * pMax * th.R) + th.U) / 2;
-//                Ut = Math.min(Ut, targetU);
-//                if (Double.isNaN(Ut)) Ut = 0;
-//                if (Ut < th.U) Ut = th.U;
-//            }
 
             electricalPowerSource.setU(Ut);
         }
@@ -131,7 +127,7 @@ public class GeneratorElement extends SimpleShaftElement {
 
     @Override
     public ThermalLoad getThermalLoad(Direction side, LRDU lrdu) {
-        return null;
+        return thermal;
     }
 
     @Override
@@ -150,7 +146,7 @@ public class GeneratorElement extends SimpleShaftElement {
 
     @Override
     public String thermoMeterString(Direction side) {
-        return null;
+        return Utils.plotCelsius("T", thermal.getT());
     }
 
     @Override
