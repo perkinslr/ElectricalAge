@@ -20,8 +20,8 @@ apply plugin: 'forge'
 apply plugin: 'de.undercouch.download'
 apply plugin: 'java'
 
-targetCompatibility = '1.6'
-sourceCompatibility = '1.6'
+targetCompatibility = '1.8'
+sourceCompatibility = '1.8'
 
 group = GROUP
 archivesBaseName = ARCHIVE_NAME
