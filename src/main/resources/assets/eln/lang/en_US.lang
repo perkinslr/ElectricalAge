@@ -237,3 +237,5 @@ utility_pole.name=Utility Pole
 utility_pole_w/transformer.name=Utility Pole w/transformer
 steam_turbine.name=Steam Turbine
 generator.name=Generator
+power_resistor.name=Power Resistor
+thermistor.name=Thermistor
