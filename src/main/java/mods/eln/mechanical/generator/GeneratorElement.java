@@ -64,6 +64,7 @@ public class GeneratorElement extends SimpleShaftElement {
 
             // Everything below is copied from TurbineElectricalProcess.
             // TODO: Factor this back in there. The only problem is that the generator isn't heat-based.
+            // TODO: Or rewrite. The current behaviour isn't very realistic for a rotary generator.
             // Some comments on what math is going on would be great.
             SubSystem.Th th = positiveLoad.getSubSystem().getTh(positiveLoad, electricalPowerSource);
             double Ut;
@@ -82,12 +83,12 @@ public class GeneratorElement extends SimpleShaftElement {
             double i = (Ut - th.U) / th.R;
             double p = i * Ut;
             double pMax = desc.nominalP * 1.5;
-            if (p > pMax) {
-                Ut = (Math.sqrt(th.U * th.U + 4 * pMax * th.R) + th.U) / 2;
-                Ut = Math.min(Ut, targetU);
-                if (Double.isNaN(Ut)) Ut = 0;
-                if (Ut < th.U) Ut = th.U;
-            }
+//            if (p > pMax) {
+//                Ut = (Math.sqrt(th.U * th.U + 4 * pMax * th.R) + th.U) / 2;
+//                Ut = Math.min(Ut, targetU);
+//                if (Double.isNaN(Ut)) Ut = 0;
+//                if (Ut < th.U) Ut = th.U;
+//            }
 
             electricalPowerSource.setU(Ut);
         }
