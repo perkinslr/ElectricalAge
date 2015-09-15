@@ -22,7 +22,7 @@ public class SteamTurbineDescriptor extends ShaftDescriptor {
     public final float steamPower = 2;
 
     public SteamTurbineDescriptor(String name, Class ElementClass, Class RenderClass, Obj3D obj) {
-        super(name, ElementClass, RenderClass);
+        super(name, ElementClass, RenderClass, obj);
 
         this.statics = new Obj3D.Obj3DPart[]{
                 obj.getPart("Cowl"),

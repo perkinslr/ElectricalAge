@@ -29,6 +29,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TransparentNodeEntity.class, new TransparentNodeRender());
 
         MinecraftForgeClient.registerItemRenderer(Eln.transparentNodeItem, Eln.transparentNodeItem);
+        MinecraftForgeClient.registerItemRenderer(Eln.transparentNodeItemWithFluid, Eln.transparentNodeItemWithFluid);
         MinecraftForgeClient.registerItemRenderer(Eln.sixNodeItem, Eln.sixNodeItem);
         MinecraftForgeClient.registerItemRenderer(Eln.sharedItem, Eln.sharedItem);
         MinecraftForgeClient.registerItemRenderer(Eln.sharedItemStackOne, Eln.sharedItemStackOne);

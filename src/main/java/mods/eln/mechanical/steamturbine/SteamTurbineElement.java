@@ -3,6 +3,7 @@ package mods.eln.mechanical.steamturbine;
 import mods.eln.mechanical.Shaft;
 import mods.eln.mechanical.IShaftElement;
 import mods.eln.mechanical.ShaftDescriptor;
+import mods.eln.mechanical.SimpleShaftElement;
 import mods.eln.misc.Direction;
 import mods.eln.misc.LRDU;
 import mods.eln.misc.RcInterpolator;
@@ -33,7 +34,7 @@ import java.io.IOException;
  * <p>
  * Do you want me to say something else? It's a steam turbine. Oh, and I suppose also the very first MA block.
  */
-public class SteamTurbineElement extends mods.eln.mechanical.SimpleShaftElement {
+public class SteamTurbineElement extends SimpleShaftElement {
     static Fluid steam = FluidRegistry.getFluid("steam");
     private final SteamTurbineDescriptor descriptor;
 

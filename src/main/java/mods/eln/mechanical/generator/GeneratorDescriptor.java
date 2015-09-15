@@ -17,13 +17,10 @@ public class GeneratorDescriptor extends ShaftDescriptor {
     final ElectricalCableDescriptor cable;
     public final float powerOutPerDeltaU;
     public final float nominalP;
-    public final float shaftWeight = 5;
     public IFunction RtoU;
 
     public GeneratorDescriptor(String name, Class ElementClass, Class RenderClass, ElectricalCableDescriptor cable, Obj3D obj, float nominalRads, float nominalU, float powerOutPerDeltaU, float nominalP) {
-        super(name, ElementClass, RenderClass);
-        this.ElementClass = ElementClass;
-        this.RenderClass = RenderClass;
+        super(name, ElementClass, RenderClass, obj);
 
         this.cable = cable;
         this.powerOutPerDeltaU = powerOutPerDeltaU;

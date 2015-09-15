@@ -1,6 +1,7 @@
 package mods.eln.mechanical;
 
 import mods.eln.misc.BoundingBox;
+import mods.eln.misc.Direction;
 import mods.eln.misc.Obj3D;
 import mods.eln.node.transparent.TransparentNodeDescriptor;
 import net.minecraft.item.ItemStack;
@@ -11,23 +12,36 @@ import org.lwjgl.opengl.GL11;
  * Created by svein on 15/09/15.
  */
 public class ShaftDescriptor extends TransparentNodeDescriptor {
+    protected final Obj3D obj;
     protected Obj3D.Obj3DPart[] statics;
     protected Obj3D.Obj3DPart[] rotating;
     public final float shaftWeight = 5;
 
-    public ShaftDescriptor(String name, Class ElementClass, Class RenderClass) {
+    public ShaftDescriptor(String name, Class ElementClass, Class RenderClass, Obj3D obj) {
         super(name, ElementClass, RenderClass);
+        this.obj = obj;
     }
 
     public void draw(float angle) {
-        drawShaft(statics, rotating, angle);
-    }
-
-    public void drawShaft(Obj3D.Obj3DPart statics[], Obj3D.Obj3DPart rotating[], float angle) {
-        assert rotating.length > 0;
         for (Obj3D.Obj3DPart part : statics) {
             part.draw();
         }
+        drawShaft(rotating, angle);
+    }
+
+    @Override
+    public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
+        objItemScale(obj);
+        Direction.ZN.glRotateXnRef();
+        GL11.glPushMatrix();
+        GL11.glTranslatef(0, -1, 0);
+        GL11.glScalef(0.6f, 0.6f, 0.6f);
+        draw(0);
+        GL11.glPopMatrix();
+    }
+
+    public void drawShaft(Obj3D.Obj3DPart rotating[], float angle) {
+        assert rotating.length > 0;
         // TODO: Memoize this thing. Hopefully at the Obj3D level. Or something.
         final BoundingBox bb = rotating[0].boundingBox();
         final Vec3 centre = bb.centre();
