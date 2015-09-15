@@ -42,7 +42,6 @@ public class ShaftDescriptor extends TransparentNodeDescriptor {
 
     public void drawShaft(Obj3D.Obj3DPart rotating[], float angle) {
         assert rotating.length > 0;
-        // TODO: Memoize this thing. Hopefully at the Obj3D level. Or something.
         final BoundingBox bb = rotating[0].boundingBox();
         final Vec3 centre = bb.centre();
         double ox = centre.xCoord,

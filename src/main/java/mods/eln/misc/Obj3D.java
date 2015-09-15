@@ -145,6 +145,7 @@ public class Obj3D {
 
         public float xMin = 0, yMin = 0, zMin = 0;
         public float xMax = 0, yMax = 0, zMax = 0;
+        private BoundingBox boundingBox = null;
 
         float ox, oy, oz;
         float ox2, oy2, oz2;
@@ -163,6 +164,7 @@ public class Obj3D {
             xMax = Math.max(xMax, v.x);
             yMax = Math.max(yMax, v.y);
             zMax = Math.max(zMax, v.z);
+            boundingBox = null;
         }
 
         public float getFloat(String name) {
@@ -239,13 +241,15 @@ public class Obj3D {
 		}
 
         // Returns the bounding box of the vertices we'd draw.
-        // TODO(svein): Privatize Obj3DPart, fix up the API, and memoize this.
         public BoundingBox boundingBox() {
-            BoundingBox box = BoundingBox.mergeIdentity();
-            for (FaceGroup fg : faceGroup) {
-                box = box.merge(fg.boundingBox());
+            if (boundingBox == null) {
+                BoundingBox box = BoundingBox.mergeIdentity();
+                for (FaceGroup fg : faceGroup) {
+                    box = box.merge(fg.boundingBox());
+                }
+                boundingBox = box;
             }
-            return box;
+            return boundingBox;
         }
 
         public void addNormal(Normal n) {
