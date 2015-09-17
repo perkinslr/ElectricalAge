@@ -239,3 +239,4 @@ steam_turbine.name=Steam Turbine
 generator.name=Generator
 power_resistor.name=Power Resistor
 thermistor.name=Thermistor
+rheostat.name=Rheostat
