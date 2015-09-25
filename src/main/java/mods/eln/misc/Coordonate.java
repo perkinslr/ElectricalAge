@@ -232,7 +232,8 @@ public class Coordonate implements INBTTReady {
 		int dx = x - c.x;
 		int dy = y - c.y;
 		int dz = z - c.z;
-		return Math.sqrt(dx * dx + dy * dy + dz * dz) ;
+		return Math.hypot(Math.hypot(dx, dy), dz);
+
 	}
 
 	public void setDimention(int dimention) {
