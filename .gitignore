@@ -9,9 +9,16 @@ eclipse
 run
 logs
 config
+saves
+*.json
+options.txt
 
 # IntelliJ
 .idea
 *.iml
 *.ipr
 *.iws
+
+# Blender backup files
+*.blend1
+*.blend2

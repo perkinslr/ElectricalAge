@@ -8,6 +8,7 @@ import mods.eln.misc.Obj3D.Obj3DPart;
 import mods.eln.misc.UtilsClient;
 import mods.eln.node.six.SixNodeDescriptor;
 import mods.eln.wiki.Data;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,13 +19,15 @@ import java.util.List;
 public class ElectricalDataLoggerDescriptor extends SixNodeDescriptor {
 
     Obj3D obj;
-    Obj3DPart main, led;
+    Obj3DPart main, led, reflection;
     float sx, sy, sz;
     float tx, ty, tz;
     float rx, ry, rz, ra;
     float mx, my;
 
     float cr, cg, cb;
+
+	float reflc;
 
     public boolean onFloor;
     private String textColor;
@@ -39,6 +42,7 @@ public class ElectricalDataLoggerDescriptor extends SixNodeDescriptor {
 		obj = Eln.obj.getObj(objName);
 		if (obj != null) {
 			main = obj.getPart("main");
+			reflection = obj.getPart("reflection");
 			if (main != null) {
 				sx = main.getFloat("sx");
 				sy = main.getFloat("sy");
@@ -52,7 +56,7 @@ public class ElectricalDataLoggerDescriptor extends SixNodeDescriptor {
 				ra = main.getFloat("ra");
 				mx = main.getFloat("mx");
 				my = main.getFloat("my");
-
+				reflc = main.getFloat("reflc");
 				led = obj.getPart("led");
 			}
 		}
@@ -67,12 +71,24 @@ public class ElectricalDataLoggerDescriptor extends SixNodeDescriptor {
         return false;
     }
 
-	void draw(DataLogs log, LRDU front) {
+	void draw(DataLogs log, LRDU front, int objPosMX, int objPosMZ) {
 		if (onFloor) front.glRotateOnX();
         else GL11.glRotatef(90, 1, 0, 0);
 		//GL11.glDisable(GL11.GL_TEXTURE_2D);
 		if (main != null) main.draw();
 		//GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+		//Glass (reflections)
+		UtilsClient.enableBlend();
+		obj.bindTexture("Reflection.png");
+		float rotYaw = Minecraft.getMinecraft().thePlayer.rotationYaw / 360.f;
+		float rotPitch = Minecraft.getMinecraft().thePlayer.rotationPitch / 180.f;
+		float pos = (((float)Minecraft.getMinecraft().thePlayer.posX)-((float)(objPosMX*2)) + ((float)Minecraft.getMinecraft().thePlayer.posZ)-((float)(objPosMZ*2))) / 24.f;
+		GL11.glColor4f(1, 1, 1, reflc);
+		reflection.draw(rotYaw+pos, rotPitch*0.857f);
+		UtilsClient.disableBlend();
+
+		//Plot
 		if (log != null) {
 			UtilsClient.disableLight();
 	       // GL11.glPushMatrix();	
