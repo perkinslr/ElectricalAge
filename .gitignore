@@ -19,7 +19,6 @@ options.txt
 *.ipr
 *.iws
 
-# Blender
+# Blender backup files
 *.blend1
 *.blend2
-
